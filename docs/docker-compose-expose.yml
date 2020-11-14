@@ -2,7 +2,9 @@ version: '3.4'
 
 networks:
   internal:
-    external: false  
+    external: false
+  external:
+    
 
 services:
   web:

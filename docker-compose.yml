@@ -1,9 +1,5 @@
 version: '3.4'
 
-networks:
-  internal:
-    external: false
-
 services:
   web:
     image: web_django
