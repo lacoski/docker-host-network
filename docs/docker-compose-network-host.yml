@@ -3,8 +3,6 @@ version: '3.4'
 networks:
   internal:
     external: false
-  external:
-    
 
 services:
   web:
@@ -15,8 +13,7 @@ services:
     command: gunicorn project.wsgi:application --workers 3 --bind 0.0.0.0:8000
     ports:
       - 8000
-    networks:
-      - internal
+    network_mode: host
     env_file:
       - ./.env
     volumes:
@@ -27,10 +24,11 @@ services:
 
   nginx:
     build: ./sources/nginx
+    extra_hosts:
+      - "web:127.0.0.1"
     ports:
-      - 80:80
-    networks:
-      - internal 
+      - 80
+    network_mode: host
     volumes:
       - static:/home/web/api/static
     environment:
@@ -38,7 +36,7 @@ services:
     depends_on:
       - web
     restart: always
-
+  
 volumes:
   log:
     driver: local

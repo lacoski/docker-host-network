@@ -22,6 +22,21 @@ services:
       - settings:/home/web/api/project
     restart: always
 
+  nginx:
+    build: ./sources/nginx
+    extra_hosts:
+      - "web:127.0.0.1"
+    ports:
+      - 80
+    network_mode: host
+    volumes:
+      - static:/home/web/api/static
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    depends_on:
+      - web
+    restart: always
+  
 volumes:
   log:
     driver: local
