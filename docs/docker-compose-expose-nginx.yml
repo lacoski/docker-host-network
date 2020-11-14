@@ -1,0 +1,61 @@
+version: '3.4'
+
+networks:
+  internal:
+    external: false
+  external:
+    
+
+services:
+  web:
+    image: web_django
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: gunicorn project.wsgi:application --workers 3 --bind 0.0.0.0:8000
+    ports:
+      - 8000
+    networks:
+      - internal
+    env_file:
+      - ./.env
+    volumes:
+      - log:/home/web/log/
+      - static:/home/web/api/static
+      - settings:/home/web/api/project
+    restart: always
+
+  nginx:
+    build: ./sources/nginx
+    ports:
+      - 80:80
+    networks:
+      - internal 
+    volumes:
+      - static:/home/web/api/static
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    depends_on:
+      - web
+    restart: always
+
+volumes:
+  log:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /opt/web/log/
+  static:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /opt/web/static/
+  settings:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /opt/web/settings/
+
